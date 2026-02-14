@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Árbol de Momentos - Nuestra Historia</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e1ca0 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        /* Header con contador */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #069ad4e0;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+        }
+
+        .counter-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .counter-box {
+            background: linear-gradient(135deg, #1dc9c9e8, #968eff);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            min-width: 150px;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .counter-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .counter-label {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+
+        /* Sección del árbol */
+        .tree-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .tree-title {
+            color: #2c3e50;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .tree-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 50%, #90EE90 80%);
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .tree-instruction {
+            margin-top: 15px;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* Sección de la carta */
+        .letter-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+        }
+
+        .letter-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .heart-icon {
+            font-size: 3em;
+            color: #ff6b6b;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .letter-content {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.2em;
+            line-height: 1.8;
+            color: #444;
+        }
+
+        .letter-content p {
+            margin-bottom: 20px;
+        }
+
+        .signature {
+            text-align: right;
+            font-style: italic;
+            margin-top: 40px;
+            font-size: 1.3em;
+            color: #ff6b6b;
+        }
+
+        .date-picker {
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .date-picker label {
+            display: block;
+            margin-bottom: 10px;
+            color: #666;
+            font-weight: bold;
+        }
+
+        .date-input {
+            padding: 10px 20px;
+            font-size: 1.1em;
+            border: 2px solid #ff6b6b;
+            border-radius: 10px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .date-input:focus {
+            border-color: #ff8e8e;
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            font-size: 1.1em;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: transform 0.3s;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: white;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header con contador -->
+        <div class="header">
+            <h1>🌳 Nuestros Momentos🌳</h1>
+            <div class="subtitle">Cada momento de nuestras vidas aveces es efimero, pero son esos momentos en los siempre que pienso antes de dormir</div>
+            
+            <div class="date-picker">
+                <label for="startDate">Selecciona el inicio :</label>
+                <input type="date" id="startDate" class="date-input" value="2024-01-01">
+                <button class="btn" onclick="updateCounter()">Actualizar</button>
+            </div>
+
+            <div class="counter-container" id="counterContainer">
+                <div class="counter-box">
+                    <div class="counter-number" id="years">0</div>
+                    <div class="counter-label">Años</div>
+                </div>
+                <div class="counter-box">
+                    <div class="counter-number" id="months">0</div>
+                    <div class="counter-label">Meses</div>
+                </div>
+                <div class="counter-box">
+                    <div class="counter-number" id="days">0</div>
+                    <div class="counter-label">Días</div>
+                </div>
+                <div class="counter-box">
+                    <div class="counter-number" id="hours">0</div>
+                    <div class="counter-label">Horas</div>
+                </div>
+                <div class="counter-box">
+                    <div class="counter-number" id="minutes">0</div>
+                    <div class="counter-label">Minutos</div>
+                </div>
+                <div class="counter-box">
+                    <div class="counter-number" id="seconds">0</div>
+                    <div class="counter-label">Segundos</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección del árbol interactivo -->
+        <div class="tree-section">
+            <h2 class="tree-title">🌳 Nuestro Árbol 🌳</h2>
+            <div class="tree-container" id="treeContainer">
+                <canvas id="treeCanvas"></canvas>
+            </div>
+            <p class="tree-instruction"> Haz clic en el árbol para ver caer los corazones </p>
+        </div>
+
+        <!-- Carta dedicatoria -->
+        <div class="letter-section">
+            <div class="letter-header">
+                <div class="heart-icon">❤️</div>
+                <h2 style="color: #ff6b6b; margin-top: 10px;">Para ti, mi cielo</h2>
+            </div>
+            
+            <div class="letter-content" id="loveLetter">
+                <p>Hay gente muy especial y luego esta mi Miriquitingui</p>
+                
+                <p>Hoy 14 de febrero me siento muy gf pero vale la pena, al ver este árbol crecer, no puedo dejar de pensar en cómo nuestros momentos ha florecido con el tiempo. Cada rama representa un momento compartido, cada hoja en forma de corazón es un recuerdo que hemos construido juntos.</p>
+                
+                <p>Desde aquel primer día que te vi en ese parada de ud3 hasta hoy, no he dejado en pensar en unas de las personas mas icreibles, profundas y hermosa.</p>
+                
+                <p>Los números arriba cuentan el tiempo que he estado loco por ti, pero no pueden medir la inmensidad de lo que siento por ti. Cada segundo a tu lado es un regalo.</p>
+                
+                <p>Que este árbol siga creciendo, que nuestros momentos a los que llamo hojas de corazón sigan cayendo suavemente, recordándome que el momento mas hermoso y perfecto siempre sera contigo .</p>
+                
+                <p>Te quiero mas de lo que las palabras pueden expresar, más de lo que este árbol puede mostrar, más de lo que el tiempo puede contar.</p>
+                
+                <div class="signature">
+                    Con toda el alma de mi corazon<br>
+                    Erick ❤️
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Hecho con ❤️ para ti - Nuestro árbol crece cada día</p>
+        </footer>
+    </div>
+
+    <script>
+        // Configuración del canvas
+        const canvas = document.getElementById('treeCanvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let hearts = [];
+        let growing = true;
+
+        // Clase para los corazones
+        class Heart {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 15 + 10;
+                this.speed = Math.random() * 2 + 1;
+                this.opacity = 1;
+                this.rotation = Math.random() * 360;
+            }
+
+            update() {
+                this.y += this.speed;
+                this.opacity -= 0.002;
+                this.rotation += 1;
+                return this.opacity > 0 && this.y < height + 50;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate((this.rotation * Math.PI) / 180);
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = '#ff6b6b';
+                
+                // Dibujar corazón
+                ctx.beginPath();
+                ctx.moveTo(0, this.size / 4);
+                ctx.bezierCurveTo(-this.size / 2, -this.size / 2, -this.size / 4, -this.size, 0, -this.size / 2);
+                ctx.bezierCurveTo(this.size / 4, -this.size, this.size / 2, -this.size / 2, 0, this.size / 4);
+                ctx.fill();
+                
+                ctx.restore();
+            }
+        }
+
+        // Dibujar el árbol
+        function drawTree() {
+            ctx.clearRect(0, 0, width, height);
+            
+            // Tronco
+            ctx.fillStyle = '#8B4513';
+            ctx.beginPath();
+            ctx.moveTo(width / 2 - 30, height);
+            ctx.lineTo(width / 2 - 20, height - 200);
+            ctx.lineTo(width / 2 + 20, height - 200);
+            ctx.lineTo(width / 2 + 30, height);
+            ctx.fill();
+            
+            // Textura del tronco
+            ctx.strokeStyle = '#5D3A1A';
+            ctx.lineWidth = 2;
+            for (let i = 0; i < 5; i++) {
+                let y = height - 40 - i * 40;
+                ctx.beginPath();
+                ctx.moveTo(width / 2 - 25, y);
+                ctx.lineTo(width / 2 + 25, y - 10);
+                ctx.stroke();
+            }
+
+            // Raíces
+            ctx.fillStyle = '#5D3A1A';
+            ctx.beginPath();
+            ctx.moveTo(width / 2 - 30, height);
+            ctx.lineTo(width / 2 - 50, height + 20);
+            ctx.lineTo(width / 2 - 40, height + 15);
+            ctx.lineTo(width / 2 - 20, height);
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.moveTo(width / 2 + 30, height);
+            ctx.lineTo(width / 2 + 50, height + 20);
+            ctx.lineTo(width / 2 + 40, height + 15);
+            ctx.lineTo(width / 2 + 20, height);
+            ctx.fill();
+
+            // Copa del árbol (forma de corazón grande)
+            ctx.fillStyle = '#90EE90';
+            ctx.shadowColor = '#ff6b6b';
+            ctx.shadowBlur = 20;
+            
+            // Hojas en forma de corazón
+            for (let i = 0; i < 12; i++) {
+                let angle = (i / 12) * Math.PI * 2;
+                let x = width / 2 + Math.cos(angle) * 80;
+                let y = height - 200 + Math.sin(angle) * 60;
+                
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(angle);
+                ctx.fillStyle = i % 2 === 0 ? '#90EE90' : '#98FB98';
+                ctx.beginPath();
+                ctx.moveTo(0, 10);
+                ctx.bezierCurveTo(-15, -10, -10, -25, 0, -15);
+                ctx.bezierCurveTo(10, -25, 15, -10, 0, 10);
+                ctx.fill();
+                ctx.restore();
+            }
+            
+            ctx.shadowBlur = 0;
+
+            // Corazones en las ramas
+            for (let i = 0; i < 5; i++) {
+                let x = width / 2 + (i - 2) * 30;
+                let y = height - 220 + i * 15;
+                
+                ctx.fillStyle = '#ff6b6b';
+                ctx.shadowColor = '#ff6b6b';
+                ctx.shadowBlur = 10;
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.bezierCurveTo(x - 10, y - 10, x - 5, y - 20, x, y - 12);
+                ctx.bezierCurveTo(x + 5, y - 20, x + 10, y - 10, x, y);
+                ctx.fill();
+            }
+            
+            ctx.shadowBlur = 0;
+        }
+
+        // Animar el árbol
+        function animate() {
+            drawTree();
+            
+            // Actualizar y dibujar corazones
+            hearts = hearts.filter(heart => heart.update());
+            hearts.forEach(heart => heart.draw());
+            
+            if (growing) {
+                // Hacer crecer el árbol lentamente
+                // (efecto visual de crecimiento)
+            }
+            
+            requestAnimationFrame(animate);
+        }
+
+        // Crear corazón al hacer clic
+        function createHeart(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    hearts.push(new Heart(
+                        x + (Math.random() - 0.5) * 40,
+                        y + (Math.random() - 0.5) * 40
+                    ));
+                }, i * 100);
+            }
+        }
+
+        // Contador de tiempo
+        function updateCounter() {
+            const startDate = new Date(document.getElementById('startDate').value);
+            const now = new Date();
+            
+            let years = now.getFullYear() - startDate.getFullYear();
+            let months = now.getMonth() - startDate.getMonth();
+            let days = now.getDate() - startDate.getDate();
+            
+            if (days < 0) {
+                months--;
+                const lastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+                days += lastMonth.getDate();
+            }
+            
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+            
+            // Calcular horas, minutos y segundos
+            const diffMs = now - startDate;
+            const hours = Math.floor(diffMs / (1000 * 60 * 60)) % 24;
+            const minutes = Math.floor(diffMs / (1000 * 60)) % 60;
+            const seconds = Math.floor(diffMs / 1000) % 60;
+            
+            document.getElementById('years').textContent = years;
+            document.getElementById('months').textContent = months;
+            document.getElementById('days').textContent = days;
+            document.getElementById('hours').textContent = hours;
+            document.getElementById('minutes').textContent = minutes;
+            document.getElementById('seconds').textContent = seconds;
+        }
+
+        // Inicialización
+        window.addEventListener('load', () => {
+            width = canvas.width = canvas.offsetWidth;
+            height = canvas.height = canvas.offsetHeight;
+            
+            animate();
+            updateCounter();
+            
+            // Actualizar contador cada segundo
+            setInterval(updateCounter, 1000);
+        });
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = canvas.offsetWidth;
+            height = canvas.height = canvas.offsetHeight;
+        });
+
+        document.getElementById('treeContainer').addEventListener('click', createHeart);
+    </script>
+</body>
+</html>
